@@ -27,7 +27,14 @@ const TaskPage = () => {
   };
 
   const updateTasksLocalStorage = () => {
-    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    let tasks = [];
+    try {
+      const raw = localStorage.getItem("tasks");
+      tasks = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      console.error("Erro ao acessar ou parsear localStorage:", e);
+      tasks = [];
+    }
 
     if (isEditing) {
       if (title.trim() === "" || description.trim() === "") {
@@ -44,6 +51,7 @@ const TaskPage = () => {
         return task;
       });
 
+      // Salva novamente no localStorage
       localStorage.setItem("tasks", JSON.stringify(newTasks));
       atualizarURL();
     }
@@ -93,24 +101,3 @@ const TaskPage = () => {
   );
 };
 export default TaskPage;
-
-// return (
-//   <div>
-//     <h1>Editar Tarefa</h1>
-//     <div>
-//       <label>Título:</label>
-//       <input value={title} onChange={(e) => setTitle(e.target.value)} />
-//     </div>
-//     <div>
-//       <label>Descrição:</label>
-//       <input
-//         value={description}
-//         onChange={(e) => setDescription(e.target.value)}
-//       />
-//     </div>
-//     <button onClick={() => updateTasksLocalStorage()}>Salvar</button>
-//     <button className="m-8" onClick={() => navigate("/")}>
-//       voltar
-//     </button>
-//   </div>
-// );

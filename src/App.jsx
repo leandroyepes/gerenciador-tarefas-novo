@@ -1,12 +1,21 @@
+import { useEffect, useState } from "react";
 import AddTask from "./components/AddTask";
 import Tasks from "./components/Tasks";
-import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 
 function App() {
-  const [tasks, setTasks] = useState(
-    JSON.parse(localStorage.getItem("tasks") || [])
-  );
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    try {
+      const storedTasks = localStorage.getItem("tasks");
+      if (storedTasks) {
+        setTasks(JSON.parse(storedTasks));
+      }
+    } catch (error) {
+      console.error("Erro ao carregar tarefas do localStorage:", error);
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -44,7 +53,7 @@ function App() {
     <div className="bg-slate-800 w-screen flex justify-center p-6 flex-1">
       <div className="w-[500px] space-y-4">
         <h1 className="text-white text-3xl text-center font-bold">
-          Gerenciado de Tarefas
+          Gerenciador de Tarefas
         </h1>
         <AddTask onClickAdd={onClickAdd} />
         <Tasks
